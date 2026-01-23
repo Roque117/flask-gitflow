@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, render_template_string, request, jsonify
 
-
+app = Flask(__name__)
 
 # ===== PARTE 1: HTML/CSS/JAVASCRIPT (Interfaz) =====
 HTML_TEMPLATE = '''
@@ -540,7 +540,7 @@ HTML_TEMPLATE = '''
                 showAlert('Error de conexión: ' + error.message, 'alert-error');
             }
         }
-
+        
         // ===== PARTE 3: LLAMADAS A LA API (Multiplicación y División) =====
         async function apiMultiply() {
             const num1 = document.getElementById('mulNum1').value;
