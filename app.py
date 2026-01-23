@@ -478,3 +478,65 @@ HTML_TEMPLATE = '''
             document.getElementById('alert').style.display = 'none';
         }
         
+        // ===== PARTE 2: LLAMADAS A LA API (Suma y Resta) =====
+        async function apiSum() {
+            const num1 = document.getElementById('sumNum1').value;
+            const num2 = document.getElementById('sumNum2').value;
+            
+            if (!num1 || !num2) {
+                showAlert('Por favor ingresa ambos números', 'alert-error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/sumar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ num1: parseFloat(num1), num2: parseFloat(num2) })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showAlert(data.error, 'alert-error');
+                } else {
+                    showAlert(`Resultado: ${data.resultado}`, 'alert-success');
+                    addToHistory(`${num1} + ${num2} = ${data.resultado}`);
+                }
+            } catch (error) {
+                showAlert('Error de conexión: ' + error.message, 'alert-error');
+            }
+        }
+        
+        async function apiSubtract() {
+            const num1 = document.getElementById('sumNum1').value;
+            const num2 = document.getElementById('sumNum2').value;
+            
+            if (!num1 || !num2) {
+                showAlert('Por favor ingresa ambos números', 'alert-error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/restar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ num1: parseFloat(num1), num2: parseFloat(num2) })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showAlert(data.error, 'alert-error');
+                } else {
+                    showAlert(`Resultado: ${data.resultado}`, 'alert-success');
+                    addToHistory(`${num1} - ${num2} = ${data.resultado}`);
+                }
+            } catch (error) {
+                showAlert('Error de conexión: ' + error.message, 'alert-error');
+            }
+        }
