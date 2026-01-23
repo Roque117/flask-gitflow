@@ -540,3 +540,275 @@ HTML_TEMPLATE = '''
                 showAlert('Error de conexión: ' + error.message, 'alert-error');
             }
         }
+
+        // ===== PARTE 3: LLAMADAS A LA API (Multiplicación y División) =====
+        async function apiMultiply() {
+            const num1 = document.getElementById('mulNum1').value;
+            const num2 = document.getElementById('mulNum2').value;
+            
+            if (!num1 || !num2) {
+                showAlert('Por favor ingresa ambos números', 'alert-error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/multiplicar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ num1: parseFloat(num1), num2: parseFloat(num2) })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showAlert(data.error, 'alert-error');
+                } else {
+                    showAlert(`Resultado: ${data.resultado}`, 'alert-success');
+                    addToHistory(`${num1} × ${num2} = ${data.resultado}`);
+                }
+            } catch (error) {
+                showAlert('Error de conexión: ' + error.message, 'alert-error');
+            }
+        }
+        
+        async function apiDivide() {
+            const num1 = document.getElementById('mulNum1').value;
+            const num2 = document.getElementById('mulNum2').value;
+            
+            if (!num1 || !num2) {
+                showAlert('Por favor ingresa ambos números', 'alert-error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/dividir', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ num1: parseFloat(num1), num2: parseFloat(num2) })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showAlert(data.error, 'alert-error');
+                } else {
+                    showAlert(`Resultado: ${data.resultado}`, 'alert-success');
+                    addToHistory(`${num1} ÷ ${num2} = ${data.resultado}`);
+                }
+            } catch (error) {
+                showAlert('Error de conexión: ' + error.message, 'alert-error');
+            }
+        }
+        
+        // Función para calcular la operación actual
+        async function calculate() {
+            if (currentOperation === '0' || currentOperation === 'Error') {
+                return;
+            }
+            
+            // Validar que la operación termine con un número
+            const lastChar = currentOperation.slice(-1);
+            if ('+-*/'.includes(lastChar)) {
+                showAlert('La operación no puede terminar con un operador', 'alert-error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/calcular', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ operacion: currentOperation })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showAlert(data.error, 'alert-error');
+                    currentResult = 'Error';
+                } else {
+                    currentResult = data.resultado;
+                    addToHistory(`${currentOperation} = ${data.resultado}`);
+                    showAlert('Cálculo exitoso', 'alert-success');
+                }
+            } catch (error) {
+                showAlert('Error de conexión: ' + error.message, 'alert-error');
+                currentResult = 'Error';
+            }
+            
+            updateDisplay();
+        }
+        
+        function addToHistory(operation) {
+            operationHistory.unshift(operation);
+            if (operationHistory.length > 5) {
+                operationHistory.pop();
+            }
+            
+            const historyElement = document.getElementById('history');
+            historyElement.innerHTML = '';
+            
+            operationHistory.forEach(op => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                item.innerHTML = `
+                    <span class="history-operation">${op.split('=')[0]}=</span>
+                    <span class="history-result">${op.split('=')[1]}</span>
+                `;
+                historyElement.appendChild(item);
+            });
+        }
+        
+        // Inicializar
+        updateDisplay();
+    </script>
+</body>
+</html>
+'''
+
+# ===== PARTE 4: RUTAS FLASK (Backend) =====
+@app.route("/")
+def home():
+    return render_template_string(HTML_TEMPLATE)
+
+# ===== PARTE 1: SUMA Y RESTA =====
+@app.route("/api/sumar", methods=['POST'])
+def sumar():
+    try:
+        data = request.get_json()
+        
+        # Validaciones
+        if not data or 'num1' not in data or 'num2' not in data:
+            return jsonify({'error': 'Datos incompletos'}), 400
+            
+        try:
+            num1 = float(data['num1'])
+            num2 = float(data['num2'])
+        except ValueError:
+            return jsonify({'error': 'Los valores deben ser números válidos'}), 400
+        
+        resultado = num1 + num2
+        return jsonify({'resultado': resultado})
+        
+    except Exception as e:
+        return jsonify({'error': f'Error interno: {str(e)}'}), 500
+
+@app.route("/api/restar", methods=['POST'])
+def restar():
+    try:
+        data = request.get_json()
+        
+        # Validaciones
+        if not data or 'num1' not in data or 'num2' not in data:
+            return jsonify({'error': 'Datos incompletos'}), 400
+            
+        try:
+            num1 = float(data['num1'])
+            num2 = float(data['num2'])
+        except ValueError:
+            return jsonify({'error': 'Los valores deben ser números válidos'}), 400
+        
+        resultado = num1 - num2
+        return jsonify({'resultado': resultado})
+        
+    except Exception as e:
+        return jsonify({'error': f'Error interno: {str(e)}'}), 500
+
+# ===== PARTE 2: MULTIPLICACIÓN Y DIVISIÓN =====
+@app.route("/api/multiplicar", methods=['POST'])
+def multiplicar():
+    try:
+        data = request.get_json()
+        
+        # Validaciones
+        if not data or 'num1' not in data or 'num2' not in data:
+            return jsonify({'error': 'Datos incompletos'}), 400
+            
+        try:
+            num1 = float(data['num1'])
+            num2 = float(data['num2'])
+        except ValueError:
+            return jsonify({'error': 'Los valores deben ser números válidos'}), 400
+        
+        resultado = num1 * num2
+        return jsonify({'resultado': resultado})
+        
+    except Exception as e:
+        return jsonify({'error': f'Error interno: {str(e)}'}), 500
+
+@app.route("/api/dividir", methods=['POST'])
+def dividir():
+    try:
+        data = request.get_json()
+        
+        # Validaciones
+        if not data or 'num1' not in data or 'num2' not in data:
+            return jsonify({'error': 'Datos incompletos'}), 400
+            
+        try:
+            num1 = float(data['num1'])
+            num2 = float(data['num2'])
+        except ValueError:
+            return jsonify({'error': 'Los valores deben ser números válidos'}), 400
+        
+        # Validación especial: división por cero
+        if num2 == 0:
+            return jsonify({'error': 'No se puede dividir por cero'}), 400
+        
+        resultado = num1 / num2
+        return jsonify({'resultado': round(resultado, 10)})  # Redondear para evitar decimales largos
+        
+    except Exception as e:
+        return jsonify({'error': f'Error interno: {str(e)}'}), 500
+
+# ===== PARTE 3: CÁLCULO COMPLETO =====
+@app.route("/api/calcular", methods=['POST'])
+def calcular():
+    try:
+        data = request.get_json()
+        
+        # Validaciones
+        if not data or 'operacion' not in data:
+            return jsonify({'error': 'Operación no proporcionada'}), 400
+            
+        operacion = data['operacion']
+        
+        # Validar que la operación solo contenga caracteres permitidos
+        import re
+        if not re.match(r'^[\d+\-*/. ]+$', operacion):
+            return jsonify({'error': 'Caracteres no permitidos en la operación'}), 400
+        
+        # Validar que no haya dos operadores consecutivos
+        if re.search(r'[+\-*/]{2,}', operacion):
+            return jsonify({'error': 'Operadores consecutivos no permitidos'}), 400
+        
+        # Reemplazar caracteres para evaluación segura
+        operacion_eval = operacion.replace('×', '*').replace('÷', '/')
+        
+        try:
+            # Usar eval con precaución (en producción usar una librería como ast.literal_eval)
+            resultado = eval(operacion_eval)
+            
+            # Validar que el resultado sea un número
+            if not isinstance(resultado, (int, float)):
+                return jsonify({'error': 'Resultado no es un número válido'}), 400
+                
+            return jsonify({'resultado': round(resultado, 10)})
+            
+        except ZeroDivisionError:
+            return jsonify({'error': 'División por cero no permitida'}), 400
+        except SyntaxError:
+            return jsonify({'error': 'Sintaxis de operación inválida'}), 400
+        except Exception as e:
+            return jsonify({'error': f'Error en el cálculo: {str(e)}'}), 400
+            
+    except Exception as e:
+        return jsonify({'error': f'Error interno: {str(e)}'}), 500
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)
