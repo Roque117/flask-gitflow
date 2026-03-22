@@ -1,14 +1,39 @@
-Proyecto Flask de Tecnologías de Virtualización.
+# Sistema de Procesamiento Aritmético: Arquitectura Distribuida con Flask
 
-Este sistema es una aplicación web robusta que implementa una arquitectura cliente-servidor para el procesamiento de operaciones aritméticas. A diferencia de soluciones basadas únicamente en el navegador, este proyecto delega la lógica de cálculo a un backend en Python, garantizando mayor control y seguridad.
+![Python](https://img.shields.io/badge/Backend-Python_3.13-3776AB)
+![Flask](https://img.shields.io/badge/Framework-Flask-000000)
+![API](https://img.shields.io/badge/Architecture-REST_API-blue)
+![Status](https://img.shields.io/badge/Dev-Virtualization_Technologies-orange)
 
-Especificaciones del Sistema
-Arquitectura de API REST: El servidor Flask expone múltiples endpoints (/api/sumar, /api/calcular, etc.) que gestionan peticiones asíncronas mediante el protocolo JSON.
+Este sistema es una aplicación web de alto rendimiento que implementa una arquitectura cliente-servidor para el procesamiento de operaciones aritméticas complejas. A diferencia de las soluciones basadas exclusivamente en el lado del cliente, este proyecto delega la lógica de cómputo a un backend robusto en Python, garantizando un control total sobre la integridad del procesamiento y la seguridad de los datos.
 
-Seguridad y Validación: Implementa filtrado por expresiones regulares (Regex) en el backend para mitigar riesgos de inyección de código y asegurar que solo se procesen caracteres numéricos y operadores válidos.
+---
 
-Interfaz de Usuario (Frontend): Diseñada con CSS3 avanzado y una lógica en JavaScript que permite la actualización dinámica del DOM sin recargar la página.
+## Especificaciones del Sistema
 
-Manejo de Excepciones: El sistema está programado para identificar y reportar errores críticos, como la división por cero o sintaxis inválida, mediante códigos de estado HTTP adecuados.
+### Arquitectura de API REST
+El servidor Flask expone múltiples endpoints especializados (como `/api/sumar` y `/api/calcular`) diseñados para gestionar peticiones asíncronas. La comunicación entre capas se realiza mediante el intercambio de objetos **JSON**, asegurando una transferencia de datos ligera y eficiente.
 
-Escalabilidad: La estructura modular del código facilita la integración futura de funciones científicas complejas o la conexión con bases de datos para el almacenamiento persistente de operaciones.
+### Seguridad y Validación de Datos
+Se ha implementado una capa de seguridad basada en filtrado por **expresiones regulares (Regex)** en el backend. Esto permite mitigar riesgos de inyección de código y garantiza que el motor de cálculo solo procese caracteres numéricos y operadores aritméticos válidos.
+
+### Interfaz de Usuario Dinámica (Frontend)
+Desarrollada con **CSS3 avanzado** y lógica de programación en **JavaScript**. El sistema permite la actualización dinámica del DOM, lo que ofrece una experiencia de usuario fluida al procesar resultados en tiempo real sin necesidad de recargar la página.
+
+### Gestión Avanzada de Excepciones
+El backend está programado para identificar, capturar y reportar errores críticos de ejecución, tales como:
+* División por cero.
+* Errores de sintaxis inválida.
+* Desbordamiento de memoria.
+Cada excepción es comunicada al cliente mediante códigos de estado HTTP estandarizados.
+
+### Escalabilidad y Modularidad
+La estructura interna del código sigue principios de diseño modular, lo que facilita la integración futura de funciones científicas avanzadas o la persistencia de datos mediante la conexión a sistemas de bases de datos relacionales.
+
+---
+
+## Guía de Instalación y Uso
+
+1. **Clonar el repositorio:**
+   ```bash
+   git clone [https://github.com/Roque117/Virtualization-Project.git](https://github.com/Roque117/Virtualization-Project.git)
